@@ -36,14 +36,6 @@ public class S_GameManager : MonoBehaviour
 
             gridManager.SpawnTile();
 
-            // Verificar victoria
-            if (gridManager.HasTileValue(2048))
-            {
-                scoreManager.ShowVictory();
-                gameOver = true;
-                return;
-            }
-
             // Verificar derrota
             if (!gridManager.HasAvailableMoves())
             {

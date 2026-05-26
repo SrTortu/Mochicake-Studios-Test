@@ -10,10 +10,10 @@ public class S_GridManager : MonoBehaviour
     [SerializeField] private float cellSize = 100f;
     [SerializeField] private float spacing = 10f;
 
-    private S_Tile[,] tiles;
-    private int lastMergeValue = 0;
+    private S_Tile[] tiles;
+    private List<int> emptyIndices;
 
-    public int LastMergeValue => lastMergeValue;
+    public int LastMergeValue { get; private set; }
 
     private void Awake()
     {
@@ -31,7 +31,14 @@ public class S_GridManager : MonoBehaviour
 
     private void InitializeGrid()
     {
-        tiles = new S_Tile[gridSize, gridSize];
+        int totalCells = gridSize * gridSize;
+        tiles = new S_Tile[totalCells];
+        emptyIndices = new List<int>(totalCells);
+
+        for (int i = 0; i < totalCells; i++)
+        {
+            emptyIndices.Add(i);
+        }
     }
 
     public void StartNewGame()
@@ -43,270 +50,191 @@ public class S_GridManager : MonoBehaviour
 
     public bool TryMove(Direction direction)
     {
-        lastMergeValue = 0;
+        LastMergeValue = 0;
+        bool moved = MoveInDirection(direction);
+
+        if (moved)
+        {
+            UpdateEmptyIndices();
+        }
+
+        return moved;
+    }
+
+    private bool MoveInDirection(Direction direction)
+    {
         bool moved = false;
 
-        Debug.Log($"TryMove: {direction}");
+        for (int line = 0; line < gridSize; line++)
+        {
+            ProcessLineInDirection(line, direction, ref moved);
+        }
+
+        return moved;
+    }
+
+    private void ProcessLineInDirection(int line, Direction direction, ref bool moved)
+    {
+        // Extraer las fichas de la línea según la dirección
+        List<S_Tile> tilesInLine = ExtractTilesInDirection(line, direction);
+
+        // Hacer merges
+        List<S_Tile> mergedTiles = MergeTiles(tilesInLine, ref moved);
+
+        // Colocar las fichas en su nueva posición
+        PlaceTilesInDirection(line, direction, mergedTiles, ref moved);
+    }
+
+    private List<S_Tile> ExtractTilesInDirection(int line, Direction direction)
+    {
+        List<S_Tile> tilesInLine = new List<S_Tile>(gridSize);
+
+        for (int pos = 0; pos < gridSize; pos++)
+        {
+            int index = GetIndexInDirection(line, pos, direction);
+
+            if (tiles[index] != null)
+            {
+                tilesInLine.Add(tiles[index]);
+            }
+        }
+
+        return tilesInLine;
+    }
+
+    private void PlaceTilesInDirection(int line, Direction direction, List<S_Tile> mergedTiles, ref bool moved)
+    {
+        for (int pos = 0; pos < gridSize; pos++)
+        {
+            int index = GetIndexInDirection(line, pos, direction);
+            S_Tile newTile = (pos < mergedTiles.Count) ? mergedTiles[pos] : null;
+
+            if (newTile == null)
+            {
+                if (tiles[index] != null)
+                {
+                    Destroy(tiles[index].gameObject);
+                    tiles[index] = null;
+                    moved = true;
+                }
+            }
+            else
+            {
+                if (tiles[index] != newTile)
+                {
+                    tiles[index] = newTile;
+                    moved = true;
+                }
+                UpdateTilePosition(newTile);
+            }
+        }
+    }
+
+    private int GetIndexInDirection(int line, int pos, Direction direction)
+    {
         switch (direction)
         {
-            case Direction.Left: moved = MoveLeft(); break;
-            case Direction.Right: moved = MoveRight(); break;
-            case Direction.Up: moved = MoveUp(); break;
-            case Direction.Down: moved = MoveDown(); break;
+            case Direction.Left:  return XYToIndex(pos, line);
+            case Direction.Right: return XYToIndex(gridSize - 1 - pos, line);
+            case Direction.Up:    return XYToIndex(line, pos);
+            case Direction.Down:  return XYToIndex(line, gridSize - 1 - pos);
+            default: return 0;
         }
-        Debug.Log($"Move result: {moved}");
-        return moved;
     }
 
-    private bool MoveLeft()
+    private List<S_Tile> MergeTiles(List<S_Tile> tilesInLine, ref bool moved)
     {
-        bool moved = false;
-        for (int y = 0; y < gridSize; y++)
+        List<S_Tile> result = new List<S_Tile>(gridSize);
+
+        for (int i = 0; i < tilesInLine.Count; i++)
         {
-            List<S_Tile> row = new List<S_Tile>();
-            for (int x = 0; x < gridSize; x++)
+            if (i + 1 < tilesInLine.Count && tilesInLine[i].Value == tilesInLine[i + 1].Value)
             {
-                if (tiles[x, y] != null)
-                {
-                    row.Add(tiles[x, y]);
-                    tiles[x, y] = null;
-                }
-            }
+                int newValue = tilesInLine[i].Value * 2;
+                tilesInLine[i].Init(newValue);
+                LastMergeValue = newValue;
 
-            List<S_Tile> merged = new List<S_Tile>();
-            for (int i = 0; i < row.Count; i++)
-            {
-                if (i + 1 < row.Count && row[i].Value == row[i + 1].Value)
-                {
-                    int newValue = row[i].Value * 2;
-                    row[i].Init(newValue);
-                    lastMergeValue = newValue;
-                    Destroy(row[i + 1].gameObject);
-                    merged.Add(row[i]);
-                    i++;
-                    moved = true;
-                }
-                else
-                {
-                    merged.Add(row[i]);
-                }
+                Destroy(tilesInLine[i + 1].gameObject);
+                result.Add(tilesInLine[i]);
+                i++;
+                moved = true;
             }
-
-            for (int i = 0; i < merged.Count; i++)
+            else
             {
-                int targetX = i;
-                tiles[targetX, y] = merged[i];
-                RectTransform rt = merged[i].GetComponent<RectTransform>();
-                Vector2 targetPos = GetCellAnchoredPosition(targetX, y);
-                if (rt.anchoredPosition != targetPos)
-                {
-                    rt.anchoredPosition = targetPos;
-                    moved = true;
-                }
+                result.Add(tilesInLine[i]);
             }
         }
-        return moved;
+        return result;
     }
 
-    private bool MoveRight()
+
+    private void UpdateEmptyIndices()
     {
-        bool moved = false;
-        for (int y = 0; y < gridSize; y++)
+        emptyIndices.Clear();
+        for (int i = 0; i < tiles.Length; i++)
         {
-            List<S_Tile> row = new List<S_Tile>();
-            for (int x = gridSize - 1; x >= 0; x--)
-            {
-                if (tiles[x, y] != null)
-                {
-                    row.Add(tiles[x, y]);
-                    tiles[x, y] = null;
-                }
-            }
-
-            List<S_Tile> merged = new List<S_Tile>();
-            for (int i = 0; i < row.Count; i++)
-            {
-                if (i + 1 < row.Count && row[i].Value == row[i + 1].Value)
-                {
-                    int newValue = row[i].Value * 2;
-                    row[i].Init(newValue);
-                    lastMergeValue = newValue;
-                    Destroy(row[i + 1].gameObject);
-                    merged.Add(row[i]);
-                    i++;
-                    moved = true;
-                }
-                else
-                {
-                    merged.Add(row[i]);
-                }
-            }
-
-            for (int i = 0; i < merged.Count; i++)
-            {
-                int targetX = gridSize - 1 - i;
-                tiles[targetX, y] = merged[i];
-                RectTransform rt = merged[i].GetComponent<RectTransform>();
-                Vector2 targetPos = GetCellAnchoredPosition(targetX, y);
-                if (rt.anchoredPosition != targetPos)
-                {
-                    rt.anchoredPosition = targetPos;
-                    moved = true;
-                }
-            }
+            if (tiles[i] == null)
+                emptyIndices.Add(i);
         }
-        return moved;
-    }
-
-    private bool MoveUp()
-    {
-        bool moved = false;
-        for (int x = 0; x < gridSize; x++)
-        {
-            List<S_Tile> col = new List<S_Tile>();
-            for (int y = 0; y < gridSize; y++)
-            {
-                if (tiles[x, y] != null)
-                {
-                    col.Add(tiles[x, y]);
-                    tiles[x, y] = null;
-                }
-            }
-
-            List<S_Tile> merged = new List<S_Tile>();
-            for (int i = 0; i < col.Count; i++)
-            {
-                if (i + 1 < col.Count && col[i].Value == col[i + 1].Value)
-                {
-                    int newValue = col[i].Value * 2;
-                    col[i].Init(newValue);
-                    lastMergeValue = newValue;
-                    Destroy(col[i + 1].gameObject);
-                    merged.Add(col[i]);
-                    i++;
-                    moved = true;
-                }
-                else
-                {
-                    merged.Add(col[i]);
-                }
-            }
-
-            for (int i = 0; i < merged.Count; i++)
-            {
-                int targetY = i;
-                tiles[x, targetY] = merged[i];
-                RectTransform rt = merged[i].GetComponent<RectTransform>();
-                Vector2 targetPos = GetCellAnchoredPosition(x, targetY);
-                if (rt.anchoredPosition != targetPos)
-                {
-                    rt.anchoredPosition = targetPos;
-                    moved = true;
-                }
-            }
-        }
-        return moved;
-    }
-
-    private bool MoveDown()
-    {
-        bool moved = false;
-        for (int x = 0; x < gridSize; x++)
-        {
-            List<S_Tile> col = new List<S_Tile>();
-            for (int y = gridSize - 1; y >= 0; y--)
-            {
-                if (tiles[x, y] != null)
-                {
-                    col.Add(tiles[x, y]);
-                    tiles[x, y] = null;
-                }
-            }
-
-            List<S_Tile> merged = new List<S_Tile>();
-            for (int i = 0; i < col.Count; i++)
-            {
-                if (i + 1 < col.Count && col[i].Value == col[i + 1].Value)
-                {
-                    int newValue = col[i].Value * 2;
-                    col[i].Init(newValue);
-                    lastMergeValue = newValue;
-                    Destroy(col[i + 1].gameObject);
-                    merged.Add(col[i]);
-                    i++;
-                    moved = true;
-                }
-                else
-                {
-                    merged.Add(col[i]);
-                }
-            }
-
-            for (int i = 0; i < merged.Count; i++)
-            {
-                int targetY = gridSize - 1 - i;
-                tiles[x, targetY] = merged[i];
-                RectTransform rt = merged[i].GetComponent<RectTransform>();
-                Vector2 targetPos = GetCellAnchoredPosition(x, targetY);
-                if (rt.anchoredPosition != targetPos)
-                {
-                    rt.anchoredPosition = targetPos;
-                    moved = true;
-                }
-            }
-        }
-        return moved;
     }
 
     public void SpawnTile()
     {
-        if (tiles == null) InitializeGrid();
+        if (emptyIndices.Count == 0) return;
 
-        List<Vector2Int> emptySpaces = new List<Vector2Int>();
-        for (int x = 0; x < gridSize; x++)
-            for (int y = 0; y < gridSize; y++)
-                if (tiles[x, y] == null)
-                    emptySpaces.Add(new Vector2Int(x, y));
+        int randomIndex = Random.Range(0, emptyIndices.Count);
+        int spawnIndex = emptyIndices[randomIndex];
+        emptyIndices.RemoveAt(randomIndex);
 
-        if (emptySpaces.Count == 0) return;
-
-        Vector2Int spawnPos = emptySpaces[Random.Range(0, emptySpaces.Count)];
         int value = Random.value > 0.9f ? 4 : 2;
+        SpawnTileAt(spawnIndex, value);
+    }
+
+    private void SpawnTileAt(int index, int value)
+    {
+        (int x, int y) = IndexToXY(index);
 
         S_Tile newTile = Instantiate(tilePrefab);
         RectTransform tileRT = newTile.GetComponent<RectTransform>();
         tileRT.SetParent(gridContainer, false);
         tileRT.sizeDelta = new Vector2(cellSize, cellSize);
-        tileRT.anchoredPosition = GetCellAnchoredPosition(spawnPos.x, spawnPos.y);
+        tileRT.anchoredPosition = GetCellAnchoredPosition(x, y);
         newTile.Init(value);
-        tiles[spawnPos.x, spawnPos.y] = newTile;
+
+        tiles[index] = newTile;
+    }
+
+    private void UpdateTilePosition(S_Tile tile)
+    {
+        if (tile == null) return;
+
+        RectTransform rt = tile.GetComponent<RectTransform>();
+        int index = System.Array.IndexOf(tiles, tile);
+        if (index == -1) return;
+
+        (int x, int y) = IndexToXY(index);
+        Vector2 targetPos = GetCellAnchoredPosition(x, y);
+
+        if (rt.anchoredPosition != targetPos)
+        {
+            rt.anchoredPosition = targetPos;
+        }
     }
 
     public bool HasAvailableMoves()
     {
-        for (int x = 0; x < gridSize; x++)
-            for (int y = 0; y < gridSize; y++)
-                if (tiles[x, y] == null)
-                    return true;
+        if (emptyIndices.Count > 0) return true;
 
-        for (int x = 0; x < gridSize; x++)
+        for (int i = 0; i < tiles.Length; i++)
         {
-            for (int y = 0; y < gridSize; y++)
-            {
-                if (tiles[x, y] == null) continue;
-                int current = tiles[x, y].Value;
-                if (x < gridSize - 1 && tiles[x + 1, y] != null && current == tiles[x + 1, y].Value) return true;
-                if (y < gridSize - 1 && tiles[x, y + 1] != null && current == tiles[x, y + 1].Value) return true;
-            }
-        }
-        return false;
-    }
+            if (tiles[i] == null) continue;
 
-    public bool HasTileValue(int value)
-    {
-        for (int x = 0; x < gridSize; x++)
-            for (int y = 0; y < gridSize; y++)
-                if (tiles[x, y] != null && tiles[x, y].Value == value) return true;
+            int current = tiles[i].Value;
+            (int x, int y) = IndexToXY(i);
+
+            if (x < gridSize - 1 && tiles[XYToIndex(x + 1, y)]?.Value == current) return true;
+            if (y < gridSize - 1 && tiles[XYToIndex(x, y + 1)]?.Value == current) return true;
+        }
         return false;
     }
 
@@ -322,41 +250,28 @@ public class S_GridManager : MonoBehaviour
         InitializeGrid();
     }
 
+    private int XYToIndex(int x, int y)
+    {
+        return y * gridSize + x;
+    }
+
+    private (int x, int y) IndexToXY(int index)
+    {
+        return (index % gridSize, index / gridSize);
+    }
+
     private Vector2 GetCellAnchoredPosition(int x, int y)
     {
-        if (gridContainer == null)
-        {
-            float total = gridSize * cellSize + (gridSize - 1) * spacing;
-            float startX = -total / 2f + cellSize / 2f;
-            float startY = total / 2f - cellSize / 2f;
-            float posX = startX + x * (cellSize + spacing);
-            float posY = startY - y * (cellSize + spacing);
-            return new Vector2(posX, posY);
-        }
+        float totalWidth = gridContainer != null ? gridContainer.rect.width : gridSize * cellSize + (gridSize - 1) * spacing;
+        float totalHeight = gridContainer != null ? gridContainer.rect.height : gridSize * cellSize + (gridSize - 1) * spacing;
 
-        // Use actual rect size to be robust with anchors
-        float totalWidth = gridContainer.rect.width;
-        float totalHeight = gridContainer.rect.height;
-        float startX2 = -totalWidth / 2f + cellSize / 2f;
-        float startY2 = totalHeight / 2f - cellSize / 2f;
-        float posX2 = startX2 + x * (cellSize + spacing);
-        float posY2 = startY2 - y * (cellSize + spacing);
-        return new Vector2(posX2, posY2);
-    }
+        float startX = -totalWidth / 2f + cellSize / 2f;
+        float startY = totalHeight / 2f - cellSize / 2f;
 
-    [ContextMenu("LogGridState")]
-    public void LogGridState()
-    {
-        if (tiles == null) { Debug.Log("tiles array is null"); return; }
-        string s = "Grid state:\n";
-        for (int y = 0; y < gridSize; y++)
-        {
-            for (int x = 0; x < gridSize; x++)
-            {
-                s += tiles[x, y] != null ? tiles[x, y].Value.ToString().PadLeft(4) : "   .";
-            }
-            s += "\n";
-        }
-        Debug.Log(s);
+        float posX = startX + x * (cellSize + spacing);
+        float posY = startY - y * (cellSize + spacing);
+
+        return new Vector2(posX, posY);
     }
+    
 }

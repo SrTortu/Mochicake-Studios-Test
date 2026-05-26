@@ -946,6 +946,67 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1197977852
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1197977854}
+  - component: {fileID: 1197977853}
+  m_Layer: 0
+  m_Name: GridManager (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1197977853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197977852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1059d7afe7150b4a9dbbceb409b8723, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridContainer: {fileID: 0}
+  tilePrefab: {fileID: 0}
+  tileData:
+  - {fileID: 11400000, guid: ee198b71190b4b6429f493d473d8349b, type: 2}
+  - {fileID: 11400000, guid: 2a3337bf7fc6da843b06dd399243f173, type: 2}
+  - {fileID: 11400000, guid: 9f70708026654e24d9232ba537e90112, type: 2}
+  - {fileID: 11400000, guid: 1f2abc3455acbe34c8d0fb6757723e1a, type: 2}
+  - {fileID: 11400000, guid: 5a6defc0eebfa934c9aa2652a8463009, type: 2}
+  - {fileID: 11400000, guid: 841208005c8814341acc8cbc9f464aa5, type: 2}
+  - {fileID: 11400000, guid: 18296509574bda145998ec88cde422d8, type: 2}
+  - {fileID: 11400000, guid: 6bf659778bb36654394c4cc6c6656cb9, type: 2}
+  - {fileID: 11400000, guid: 9cc9210194e86ce4eada8a556959c424, type: 2}
+  - {fileID: 11400000, guid: e115b63418f9d4049abc976dfc362582, type: 2}
+  - {fileID: 11400000, guid: 5bd2a30ca197009419a342ac20b053f9, type: 2}
+  gridSize: 4
+  cellSize: 100
+  spacing: 10
+--- !u!4 &1197977854
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197977852}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.0571283, y: 0.7313328, z: 87.55544}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1256892592
 GameObject:
   m_ObjectHideFlags: 0
@@ -1184,3 +1245,4 @@ SceneRoots:
   - {fileID: 1256892594}
   - {fileID: 55990671}
   - {fileID: 479503356}
+  - {fileID: 1197977854}
