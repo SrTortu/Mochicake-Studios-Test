@@ -11,12 +11,14 @@ public class S_Tile : MonoBehaviour
 
     [Header("Animation Settings")]
     [SerializeField] private AnimationCurve moveCurve;
-    [SerializeField] private AnimationCurve spawnCurve;
-    [SerializeField] private AnimationCurve mergeCurve;
-
     [SerializeField] private float moveDuration = 0.1f;
+    [SerializeField] private AnimationCurve spawnCurve;
     [SerializeField] private float spawnDuration = 0.15f;
+    [SerializeField] private AnimationCurve mergeCurve;
     [SerializeField] private float mergeDuration = 0.15f;
+
+    
+    
 
     private SO_TileData _tileData;
     private int _dataIndex;

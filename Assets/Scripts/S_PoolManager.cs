@@ -4,7 +4,7 @@ using UnityEngine;
 public class S_PoolManager : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
-    [SerializeField] private S_GridManager2 gridManager;
+    [SerializeField] private S_GridManager gridManager;
 
     private Queue<GameObject> objectPool;
     private Transform poolContainer;

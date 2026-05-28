@@ -3,7 +3,7 @@ using UnityEngine;
 public class S_GameManager : MonoBehaviour
 {
     [SerializeField] private S_InputManager inputManager;
-    [SerializeField] private S_GridManager2 gridManager;
+    [SerializeField] private S_GridManager gridManager;
     [SerializeField] private S_ScoreManager scoreManager;
 
     private bool gameOver = false;
