@@ -2,45 +2,45 @@ using UnityEngine;
 
 public class S_GameManager : MonoBehaviour
 {
-    [SerializeField] private S_InputManager inputManager;
-    [SerializeField] private S_GridManager gridManager;
-    [SerializeField] private S_ScoreManager scoreManager;
+    [SerializeField] private S_InputManager _inputManager;
+    [SerializeField] private S_GridManager _gridManager;
+    [SerializeField] private S_ScoreManager _scoreManager;
 
-    private bool gameOver = false;
+    private bool _gameOver = false;
 
     private void Start()
     {
-        inputManager.OnMove += HandleMove;
-        inputManager.OnNewGame += StartNewGame;
+        _inputManager.OnMove += HandleMove;
+        _inputManager.OnNewGame += StartNewGame;
 
         StartNewGame();
     }
 
     private void StartNewGame()
     {
-        gameOver = false;
-        scoreManager.ResetScore();
-        gridManager.StartNewGame();
+        _gameOver = false;
+        _scoreManager.ResetScore();
+        _gridManager.StartNewGame();
     }
 
     private void HandleMove(Direction direction)
     {
-        if (gameOver)
+        if (_gameOver)
             return;
 
-        if (gridManager.TryMove(direction))
+        if (_gridManager.TryMove(direction))
         {
-            int mergeValue = gridManager.LastMergeValue;
+            int mergeValue = _gridManager.LastMergeValue;
             if (mergeValue > 0)
-                scoreManager.AddScore(mergeValue);
+                _scoreManager.AddScore(mergeValue);
         }
         else
         {
             // Verificar GameOver si movimiento falla
-            if (!gridManager.HasAvailableMoves())
+            if (!_gridManager.HasAvailableMoves())
             {
-                scoreManager.ShowGameOver();
-                gameOver = true;
+                _scoreManager.ShowGameOver();
+                _gameOver = true;
             }
         }
     }

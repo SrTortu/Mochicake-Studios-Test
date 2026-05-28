@@ -10,20 +10,19 @@ public class S_Tile : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _valueText;
 
     [Header("Animation Settings")]
-    [SerializeField] private AnimationCurve moveCurve;
-    [SerializeField] private float moveDuration = 0.1f;
-    [SerializeField] private AnimationCurve spawnCurve;
-    [SerializeField] private float spawnDuration = 0.15f;
-    [SerializeField] private AnimationCurve mergeCurve;
-    [SerializeField] private float mergeDuration = 0.15f;
+    [SerializeField] private AnimationCurve _moveCurve;
+    [SerializeField] private float _moveDuration = 0.1f;
+    [SerializeField] private AnimationCurve _spawnCurve;
+    [SerializeField] private float _spawnDuration = 0.15f;
+    [SerializeField] private AnimationCurve _mergeCurve;
+    [SerializeField] private float _mergeDuration = 0.15f;
 
-    
-    
+
 
     private SO_TileData _tileData;
     private int _dataIndex;
 
-    private static readonly AnimationCurve LinearCurve = AnimationCurve.Linear(0, 0, 1, 1);
+    private static readonly AnimationCurve _linearCurve = AnimationCurve.Linear(0, 0, 1, 1);
     
 
     public void Init(SO_TileData data, int dataIndex)
@@ -63,7 +62,7 @@ public class S_Tile : MonoBehaviour
     public void AnimateMerge()
     {
         if (gameObject.activeInHierarchy)
-            StartCoroutine(MergeCoroutine(mergeDuration));
+            StartCoroutine(MergeCoroutine(_mergeDuration));
         else
             transform.localScale = Vector3.one;
     }
@@ -74,7 +73,7 @@ public class S_Tile : MonoBehaviour
         Vector3 originalScale = Vector3.one;
         Vector3 expandedScale = Vector3.one * 1.2f;
 
-        AnimationCurve curve = mergeCurve != null ? mergeCurve : LinearCurve;
+        AnimationCurve curve = _mergeCurve != null ? _mergeCurve : _linearCurve;
 
         float halfDuration = duration / 2f;
         float elapsedTime = 0f;
@@ -110,13 +109,13 @@ public class S_Tile : MonoBehaviour
     public void AnimateToPosition(Vector2 targetPosition)
     {
         if (gameObject.activeInHierarchy)
-            StartCoroutine(MoveToPositionCoroutine(targetPosition, moveDuration));
+            StartCoroutine(MoveToPositionCoroutine(targetPosition, _moveDuration));
     }
 
     public void AnimateSpawn()
     {
         if (gameObject.activeInHierarchy)
-            StartCoroutine(SpawnCoroutine(spawnDuration));
+            StartCoroutine(SpawnCoroutine(_spawnDuration));
         else
             transform.localScale = Vector3.one;
     }
@@ -127,7 +126,7 @@ public class S_Tile : MonoBehaviour
         rectTransform.localScale = Vector3.zero;
         float elapsedTime = 0f;
 
-        AnimationCurve curve = spawnCurve != null ? spawnCurve : LinearCurve;
+        AnimationCurve curve = _spawnCurve != null ? _spawnCurve : _linearCurve;
 
         while (elapsedTime < duration)
         {
@@ -147,7 +146,7 @@ public class S_Tile : MonoBehaviour
         Vector2 startPosition = rectTransform.anchoredPosition;
         float elapsedTime = 0f;
 
-        AnimationCurve curve = moveCurve != null ? moveCurve : LinearCurve;
+        AnimationCurve curve = _moveCurve != null ? _moveCurve : _linearCurve;
 
         while (elapsedTime < duration)
         {

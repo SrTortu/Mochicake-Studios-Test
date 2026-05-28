@@ -10,13 +10,13 @@ public class S_GridManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private RectTransform _gridContainer;
     [SerializeField] private SO_TileData[] _tileData;
-    [SerializeField] private S_PoolManager poolManager;
+    [SerializeField] private S_PoolManager _poolManager;
 
     [Space(10), Header("Grid Settings")]
     [SerializeField] private int _gridSize = 4;
     [SerializeField] private float _cellSize = 100f;
     [SerializeField] private float _spacing = 10f;
-    [SerializeField] private Color cellBackgroundColor = new Color(0.6f, 0.55f, 0.5f);
+    [SerializeField] private Color _cellBackgroundColor = new Color(0.6f, 0.55f, 0.5f);
 
     public int GridSize { get { return _gridSize; } }
 
@@ -57,7 +57,7 @@ public class S_GridManager : MonoBehaviour
             rect.anchoredPosition = GetTilePosition(i);
 
             Image image = cellBg.AddComponent<Image>();
-            image.color = cellBackgroundColor;
+            image.color = _cellBackgroundColor;
         }
     }
 
@@ -76,7 +76,7 @@ public class S_GridManager : MonoBehaviour
             Transform child = _gridContainer.GetChild(i);
             if (child.GetComponent<S_Tile>() != null)
             {
-                poolManager.ReturnToPool(child.gameObject);
+                _poolManager.ReturnToPool(child.gameObject);
             }
         }
 
@@ -166,7 +166,7 @@ public class S_GridManager : MonoBehaviour
         return moved;
     }
 
-    private bool MergeTiles(Direction direction, bool[] mergedThisTurn)
+    private bool MergeTiles(Direction direction, bool[] _mergedThisTurnCache)
     {
         bool merged = false;
         int startIndex, endIndex, step;
@@ -180,14 +180,14 @@ public class S_GridManager : MonoBehaviour
                 if (neighborIndex >= 0 && neighborIndex < _tiles.Length &&
                     _tiles[neighborIndex] != null &&
                     _tiles[neighborIndex].GetValue() == _tiles[i].GetValue() &&
-                    !mergedThisTurn[neighborIndex])
+                    !_mergedThisTurnCache[neighborIndex])
                 {
                     SO_TileData newData = _tileData[_tiles[i].GetIDataIndex() + 1];
                     _tiles[neighborIndex].UpgradeData(newData);
                     _lastMergeValue += newData.value;
-                    poolManager.ReturnToPool(_tiles[i].gameObject);
+                    _poolManager.ReturnToPool(_tiles[i].gameObject);
                     _tiles[i] = null;
-                    mergedThisTurn[neighborIndex] = true;
+                    _mergedThisTurnCache[neighborIndex] = true;
                     merged = true;
                 }
             }
@@ -280,7 +280,7 @@ public class S_GridManager : MonoBehaviour
             dataIndex = 1;
         }
 
-        S_Tile newTile = poolManager.SpawnFromPool(_gridContainer);
+        S_Tile newTile = _poolManager.SpawnFromPool(_gridContainer);
         newTile.transform.SetAsLastSibling(); // Asegurar que esté encima de las celdas de fondo
         RectTransform tileRect = newTile.transform as RectTransform;
         tileRect.sizeDelta = new Vector2(_cellSize, _cellSize);

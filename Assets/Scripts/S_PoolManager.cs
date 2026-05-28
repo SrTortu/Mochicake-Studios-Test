@@ -3,35 +3,35 @@ using UnityEngine;
 
 public class S_PoolManager : MonoBehaviour
 {
-    [SerializeField] private GameObject prefab;
-    [SerializeField] private S_GridManager gridManager;
+    [SerializeField] private GameObject _tilePrefab;
+    [SerializeField] private S_GridManager _gridManager;
 
-    private Queue<GameObject> objectPool;
-    private Transform poolContainer;
+    private Queue<GameObject> _objectPool;
+    private Transform _poolContainer;
 
     private void Awake()
     {
-        objectPool = new Queue<GameObject>();
+        _objectPool = new Queue<GameObject>();
 
         // Crear contenedor para objetos en el pool
-        poolContainer = new GameObject("PoolContainer").transform;
-        poolContainer.SetParent(transform, false);
+        _poolContainer = new GameObject("PoolContainer").transform;
+        _poolContainer.SetParent(transform, false);
 
-        int gridSize = gridManager.GridSize;
+        int gridSize = _gridManager.GridSize;
         int poolSize = gridSize * gridSize;
 
         for (int i = 0; i < poolSize; i++)
         {
-            GameObject obj = Instantiate(prefab);
-            obj.SetActive(false);
-            obj.transform.SetParent(poolContainer, false);
-            objectPool.Enqueue(obj);
+            GameObject tile =  Instantiate(_tilePrefab);
+            tile.SetActive(false);
+            tile.transform.SetParent(_poolContainer, false);
+            _objectPool.Enqueue(tile);
         }
     }
 
     public S_Tile SpawnFromPool(Transform parent)
     {
-        GameObject objectToSpawn = objectPool.Dequeue();
+        GameObject objectToSpawn = _objectPool.Dequeue();
         objectToSpawn.SetActive(true);
         objectToSpawn.transform.SetParent(parent, false);
         return objectToSpawn.GetComponent<S_Tile>();
@@ -40,7 +40,7 @@ public class S_PoolManager : MonoBehaviour
     public void ReturnToPool(GameObject obj)
     {
         obj.SetActive(false);
-        obj.transform.SetParent(poolContainer, false);
-        objectPool.Enqueue(obj);
+        obj.transform.SetParent(_poolContainer, false);
+        _objectPool.Enqueue(obj);
     }
 }

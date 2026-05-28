@@ -14,17 +14,17 @@ public class S_InputManager : MonoBehaviour
     public event System.Action<Direction> OnMove;
     public event System.Action OnNewGame;
 
-    [SerializeField] private Button newGameButton;
-    [SerializeField] private float swipeThreshold = 50f; // Distancia mínima para registrar swipe
+    [SerializeField] private Button _newGameButton;
+    [SerializeField] private float _swipeThreshold = 50f; // Distancia mínima para registrar swipe
 
-    private Vector2 touchStartPos;
-    private Vector2 touchEndPos;
-    private bool isSwiping = false;
+    private Vector2 _touchStartPos;
+    private Vector2 _touchEndPos;
+    private bool _isSwiping = false;
 
     private void Start()
     {
-        if (newGameButton != null)
-            newGameButton.onClick.AddListener(() => OnNewGame?.Invoke());
+        if (_newGameButton != null)
+            _newGameButton.onClick.AddListener(() => OnNewGame?.Invoke());
     }
 
     private void Update()
@@ -61,28 +61,28 @@ public class S_InputManager : MonoBehaviour
         // Mouse o touch
         if (Input.GetMouseButtonDown(0))
         {
-            touchStartPos = Input.mousePosition;
-            isSwiping = true;
+            _touchStartPos = Input.mousePosition;
+            _isSwiping = true;
         }
 
-        if (Input.GetMouseButton(0) && isSwiping)
+        if (Input.GetMouseButton(0) && _isSwiping)
         {
-            touchEndPos = Input.mousePosition;
+            _touchEndPos = Input.mousePosition;
         }
 
-        if (Input.GetMouseButtonUp(0) && isSwiping)
+        if (Input.GetMouseButtonUp(0) && _isSwiping)
         {
-            isSwiping = false;
+            _isSwiping = false;
             DetectSwipe();
         }
     }
 
     private void DetectSwipe()
     {
-        Vector2 swipeDelta = touchEndPos - touchStartPos;
+        Vector2 swipeDelta = _touchEndPos - _touchStartPos;
         float swipeDistance = swipeDelta.magnitude;
 
-        if (swipeDistance < swipeThreshold)
+        if (swipeDistance < _swipeThreshold)
             return;
 
         // Determinar dirección basada en el eje mayor
