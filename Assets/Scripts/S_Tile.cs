@@ -1,53 +1,162 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class S_Tile : MonoBehaviour
 {
-    public int Value { get; set; } = 2;
-    [SerializeField] private Image background;
-    [SerializeField] private TextMeshProUGUI valueText;
+    [Header("Visuals")]
+    [SerializeField] private Image _background;
+    [SerializeField] private TextMeshProUGUI _valueText;
 
-    private void Start()
-    {
-        Init(Value);
-    }
+    [Header("Animation Settings")]
+    [SerializeField] private AnimationCurve moveCurve;
+    [SerializeField] private AnimationCurve spawnCurve;
+    [SerializeField] private AnimationCurve mergeCurve;
 
-    public void Init(int value)
+    [SerializeField] private float moveDuration = 0.1f;
+    [SerializeField] private float spawnDuration = 0.15f;
+    [SerializeField] private float mergeDuration = 0.15f;
+
+    private SO_TileData _tileData;
+    private int _dataIndex;
+
+    private static readonly AnimationCurve LinearCurve = AnimationCurve.Linear(0, 0, 1, 1);
+    
+
+    public void Init(SO_TileData data, int dataIndex)
     {
-        this.Value = value;
+        _tileData = data;
+        _dataIndex = dataIndex;
         UpdateColor();
         UpdateText();
     }
 
-    public void UpdateColor()
+    public void UpdateColor() 
     {
-        Color color = Value switch
-        {
-            2 => new Color(0.93f, 0.89f, 0.85f),
-            4 => new Color(0.93f, 0.88f, 0.78f),
-            8 => new Color(0.95f, 0.69f, 0.47f),
-            16 => new Color(0.96f, 0.58f, 0.39f),
-            32 => new Color(0.96f, 0.47f, 0.37f),
-            64 => new Color(0.96f, 0.36f, 0.32f),
-            128 => new Color(0.93f, 0.81f, 0.45f),
-            256 => new Color(0.93f, 0.79f, 0.38f),
-            512 => new Color(0.93f, 0.77f, 0.31f),
-            1024 => new Color(0.93f, 0.75f, 0.24f),
-            2048 => new Color(0.93f, 0.73f, 0.18f),
-            _ => new Color(0.1f, 0.1f, 0.1f)  //Mayores a 2048
-        };
-
-        background.color = color;   
+        Color color = _tileData.color;
+        _background.color = color;   
     }
     
     private void UpdateText()
     {
-        if (valueText != null)
-            valueText.text = Value.ToString();
+        if (_valueText != null)
+            _valueText.text = _tileData.value.ToString();
     }
     
+    public int GetValue()
+    {
+        return _tileData.value;
+    }
+    
+    public void UpgradeData(SO_TileData newData)
+    {
+        _tileData = newData;
+        _dataIndex++;
+        UpdateColor();
+        UpdateText();
+        AnimateMerge();
+    }
+
+    public void AnimateMerge()
+    {
+        if (gameObject.activeInHierarchy)
+            StartCoroutine(MergeCoroutine(mergeDuration));
+        else
+            transform.localScale = Vector3.one;
+    }
+
+    private IEnumerator MergeCoroutine(float duration)
+    {
+        RectTransform rectTransform = GetComponent<RectTransform>();
+        Vector3 originalScale = Vector3.one;
+        Vector3 expandedScale = Vector3.one * 1.2f;
+
+        AnimationCurve curve = mergeCurve != null ? mergeCurve : LinearCurve;
+
+        float halfDuration = duration / 2f;
+        float elapsedTime = 0f;
+
+        // Expandir
+        while (elapsedTime < halfDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / halfDuration;
+            float curveValue = curve.Evaluate(t);
+            rectTransform.localScale = Vector3.Lerp(originalScale, expandedScale, curveValue);
+            yield return null;
+        }
+
+        // Contraer
+        elapsedTime = 0f;
+        while (elapsedTime < halfDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / halfDuration;
+            float curveValue = curve.Evaluate(t);
+            rectTransform.localScale = Vector3.Lerp(expandedScale, originalScale, curveValue);
+            yield return null;
+        }
+
+        rectTransform.localScale = originalScale;
+    }
+    public int GetIDataIndex()
+    {
+        return _dataIndex;
+    }
+
+    public void AnimateToPosition(Vector2 targetPosition)
+    {
+        if (gameObject.activeInHierarchy)
+            StartCoroutine(MoveToPositionCoroutine(targetPosition, moveDuration));
+    }
+
+    public void AnimateSpawn()
+    {
+        if (gameObject.activeInHierarchy)
+            StartCoroutine(SpawnCoroutine(spawnDuration));
+        else
+            transform.localScale = Vector3.one;
+    }
+
+    private IEnumerator SpawnCoroutine(float duration)
+    {
+        RectTransform rectTransform = GetComponent<RectTransform>();
+        rectTransform.localScale = Vector3.zero;
+        float elapsedTime = 0f;
+
+        AnimationCurve curve = spawnCurve != null ? spawnCurve : LinearCurve;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / duration;
+            float curveValue = curve.Evaluate(t);
+            rectTransform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, curveValue);
+            yield return null;
+        }
+
+        rectTransform.localScale = Vector3.one;
+    }
+
+    private IEnumerator MoveToPositionCoroutine(Vector2 targetPosition, float duration)
+    {
+        RectTransform rectTransform = GetComponent<RectTransform>();
+        Vector2 startPosition = rectTransform.anchoredPosition;
+        float elapsedTime = 0f;
+
+        AnimationCurve curve = moveCurve != null ? moveCurve : LinearCurve;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / duration;
+            float curveValue = curve.Evaluate(t);
+            rectTransform.anchoredPosition = Vector2.Lerp(startPosition, targetPosition, curveValue);
+            yield return null;
+        }
+
+        rectTransform.anchoredPosition = targetPosition;
+    }
+
 }

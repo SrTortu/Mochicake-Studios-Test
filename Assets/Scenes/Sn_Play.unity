@@ -475,55 +475,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 413073076}
   m_CullTransparentMesh: 1
---- !u!1 &479503354
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 479503356}
-  - component: {fileID: 479503355}
-  m_Layer: 0
-  m_Name: GridManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &479503355
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 479503354}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f98f0ce87ce84142aeca5aa25f76e2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gridContainer: {fileID: 935564936}
-  tilePrefab: {fileID: 265698079194776171, guid: bb89f70845c22994081acc14d6b7fa0b, type: 3}
-  gridSize: 5
-  cellSize: 50
-  spacing: 10
---- !u!4 &479503356
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 479503354}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.0571283, y: 0.7313328, z: 87.55544}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &568771824
 GameObject:
   m_ObjectHideFlags: 0
@@ -814,7 +765,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 290, y: 290}
+  m_SizeDelta: {x: 794, y: 794}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &935564937
 MonoBehaviour:
@@ -829,7 +780,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5622641, g: 0.5622641, b: 0.5622641, a: 0.392}
+  m_Color: {r: 0.7176471, g: 0.6666667, b: 0.6156863, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -890,7 +841,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}
+  m_BackGroundColor: {r: 0.89433956, g: 0.8726386, b: 0.84202915, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -957,7 +908,7 @@ GameObject:
   - component: {fileID: 1197977854}
   - component: {fileID: 1197977853}
   m_Layer: 0
-  m_Name: GridManager (1)
+  m_Name: GridManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -975,9 +926,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1059d7afe7150b4a9dbbceb409b8723, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridContainer: {fileID: 0}
-  tilePrefab: {fileID: 0}
-  tileData:
+  _gridContainer: {fileID: 935564936}
+  _tileData:
   - {fileID: 11400000, guid: ee198b71190b4b6429f493d473d8349b, type: 2}
   - {fileID: 11400000, guid: 2a3337bf7fc6da843b06dd399243f173, type: 2}
   - {fileID: 11400000, guid: 9f70708026654e24d9232ba537e90112, type: 2}
@@ -989,9 +939,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9cc9210194e86ce4eada8a556959c424, type: 2}
   - {fileID: 11400000, guid: e115b63418f9d4049abc976dfc362582, type: 2}
   - {fileID: 11400000, guid: 5bd2a30ca197009419a342ac20b053f9, type: 2}
-  gridSize: 4
-  cellSize: 100
-  spacing: 10
+  poolManager: {fileID: 1808871164}
+  _gridSize: 5
+  _cellSize: 150
+  _spacing: 10
+  cellBackgroundColor: {r: 0.80392164, g: 0.7568628, b: 0.7058824, a: 1}
 --- !u!4 &1197977854
 Transform:
   m_ObjectHideFlags: 0
@@ -1187,6 +1139,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1443276417}
   m_CullTransparentMesh: 1
+--- !u!1 &1808871163
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1808871165}
+  - component: {fileID: 1808871164}
+  m_Layer: 0
+  m_Name: PoolManager
+  m_TagString: Tile
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1808871164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1808871163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc1cc2aeee3cef9459eda8d304f9b554, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 408289931078863884, guid: bb89f70845c22994081acc14d6b7fa0b, type: 3}
+  gridManager: {fileID: 1197977853}
+--- !u!4 &1808871165
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1808871163}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 145.8835, y: 270.99588, z: 14.312851}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1943554404
 GameObject:
   m_ObjectHideFlags: 0
@@ -1217,7 +1215,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputManager: {fileID: 1256892593}
-  gridManager: {fileID: 479503355}
+  gridManager: {fileID: 1197977853}
   scoreManager: {fileID: 55990670}
 --- !u!4 &1943554406
 Transform:
@@ -1244,5 +1242,5 @@ SceneRoots:
   - {fileID: 1943554406}
   - {fileID: 1256892594}
   - {fileID: 55990671}
-  - {fileID: 479503356}
   - {fileID: 1197977854}
+  - {fileID: 1808871165}

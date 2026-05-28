@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Tile128
   m_EditorClassIdentifier: 
   value: 128
-  color: {r: 0.92941177, g: 0.8117647, b: 0.44705883, a: 0}
+  color: {r: 0.92941177, g: 0.8117647, b: 0.44705883, a: 1}

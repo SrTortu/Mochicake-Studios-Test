@@ -1,7 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum Direction { Up, Down, Left, Right }
+public enum Direction
+{
+    Up,
+    Down,
+    Left,
+    Right
+}
 
 public class S_InputManager : MonoBehaviour
 {
@@ -9,10 +15,8 @@ public class S_InputManager : MonoBehaviour
     public event System.Action OnNewGame;
 
     [SerializeField] private Button newGameButton;
-    
-    // Configuración del swipe
     [SerializeField] private float swipeThreshold = 50f; // Distancia mínima para registrar swipe
-    
+
     private Vector2 touchStartPos;
     private Vector2 touchEndPos;
     private bool isSwiping = false;
@@ -31,24 +35,25 @@ public class S_InputManager : MonoBehaviour
 
     private void HandleKeyboardInput()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-            OnMove?.Invoke(Direction.Up);
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
-            OnMove?.Invoke(Direction.Down);
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
-            OnMove?.Invoke(Direction.Left);
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
-            OnMove?.Invoke(Direction.Right);
-
-        // Alternativa WASD
+        // ===================== WASD =====================
         if (Input.GetKeyDown(KeyCode.W))
             OnMove?.Invoke(Direction.Up);
-        else if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.S))
             OnMove?.Invoke(Direction.Down);
-        else if (Input.GetKeyDown(KeyCode.A))
-            OnMove?.Invoke(Direction.Left);
-        else if (Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.D))
             OnMove?.Invoke(Direction.Right);
+        if (Input.GetKeyDown(KeyCode.A))
+            OnMove?.Invoke(Direction.Left);
+
+        // ===================== Flechas de direccion =====================
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+            OnMove?.Invoke(Direction.Up);
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+            OnMove?.Invoke(Direction.Down);
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+            OnMove?.Invoke(Direction.Right);
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+            OnMove?.Invoke(Direction.Left);
     }
 
     private void HandleMouseInput()
@@ -76,7 +81,7 @@ public class S_InputManager : MonoBehaviour
     {
         Vector2 swipeDelta = touchEndPos - touchStartPos;
         float swipeDistance = swipeDelta.magnitude;
-        
+
         if (swipeDistance < swipeThreshold)
             return;
 

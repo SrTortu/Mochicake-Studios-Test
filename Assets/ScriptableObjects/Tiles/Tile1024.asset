@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Tile1024
   m_EditorClassIdentifier: 
   value: 1024
-  color: {r: 0.92941177, g: 0.77254903, b: 0.24705882, a: 0}
+  color: {r: 0.92941177, g: 0.77254903, b: 0.24705882, a: 1}

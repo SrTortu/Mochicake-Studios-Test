@@ -3,7 +3,7 @@ using UnityEngine;
 public class S_GameManager : MonoBehaviour
 {
     [SerializeField] private S_InputManager inputManager;
-    [SerializeField] private S_GridManager gridManager;
+    [SerializeField] private S_GridManager2 gridManager;
     [SerializeField] private S_ScoreManager scoreManager;
 
     private bool gameOver = false;
@@ -33,10 +33,10 @@ public class S_GameManager : MonoBehaviour
             int mergeValue = gridManager.LastMergeValue;
             if (mergeValue > 0)
                 scoreManager.AddScore(mergeValue);
-
-            gridManager.SpawnTile();
-
-            // Verificar derrota
+        }
+        else
+        {
+            // Verificar GameOver si movimiento falla
             if (!gridManager.HasAvailableMoves())
             {
                 scoreManager.ShowGameOver();
@@ -45,9 +45,4 @@ public class S_GameManager : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
-    {
-        inputManager.OnMove -= HandleMove;
-        inputManager.OnNewGame -= StartNewGame;
-    }
 }
