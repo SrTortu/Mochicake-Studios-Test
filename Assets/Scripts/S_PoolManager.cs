@@ -20,6 +20,7 @@ public class S_PoolManager : MonoBehaviour
         int gridSize = _gridManager.GridSize;
         int poolSize = gridSize * gridSize;
 
+        // Crea el pool de tiles
         for (int i = 0; i < poolSize; i++)
         {
             GameObject tile =  Instantiate(_tilePrefab);

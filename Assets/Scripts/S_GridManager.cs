@@ -16,7 +16,8 @@ public class S_GridManager : MonoBehaviour
     [SerializeField] private int _gridSize = 4;
     [SerializeField] private float _cellSize = 100f;
     [SerializeField] private float _spacing = 10f;
-    [SerializeField] private Color _cellBackgroundColor = new Color(0.6f, 0.55f, 0.5f);
+    [SerializeField] private Color _cellBackgroundColor ;
+
 
     public int GridSize { get { return _gridSize; } }
 
@@ -30,22 +31,23 @@ public class S_GridManager : MonoBehaviour
     private void Awake()
     {
         InitializeGrid();
+        CreateBackgroundCells(_gridSize * _gridSize);
     }
 
     private void InitializeGrid()
     {
+        // Crea el array de tiles
         int total = _gridSize * _gridSize;
         _tiles = new S_Tile[total];
         _freeIndexes = new List<int>(total);
         _mergedThisTurnCache = new bool[total];
 
-        CreateCellBackgrounds(total);
-
+        // Crea la lista de índices libres
         for (int i = 0; i < total; i++)
             _freeIndexes.Add(i);
     }
 
-    private void CreateCellBackgrounds(int total)
+    private void CreateBackgroundCells(int total)
     {
         for (int i = 0; i < total; i++)
         {
@@ -79,13 +81,7 @@ public class S_GridManager : MonoBehaviour
                 _poolManager.ReturnToPool(child.gameObject);
             }
         }
-
-        // Luego destruir todos los hijos restantes (celdas de fondo)
-        while (_gridContainer.childCount > 0)
-        {
-            Transform child = _gridContainer.GetChild(0);
-            DestroyImmediate(child.gameObject);
-        }
+        
 
         InitializeGrid();
     }

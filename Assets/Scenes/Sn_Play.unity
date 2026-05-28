@@ -939,11 +939,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9cc9210194e86ce4eada8a556959c424, type: 2}
   - {fileID: 11400000, guid: e115b63418f9d4049abc976dfc362582, type: 2}
   - {fileID: 11400000, guid: 5bd2a30ca197009419a342ac20b053f9, type: 2}
-  poolManager: {fileID: 1808871164}
+  _poolManager: {fileID: 1808871164}
   _gridSize: 5
   _cellSize: 150
   _spacing: 10
-  cellBackgroundColor: {r: 0.80392164, g: 0.7568628, b: 0.7058824, a: 1}
+  _cellBackgroundColor: {r: 0.6, g: 0.55, b: 0.5, a: 1}
 --- !u!4 &1197977854
 Transform:
   m_ObjectHideFlags: 0
@@ -988,8 +988,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84603ef3c30139a4e80dbbac2bd32f2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  newGameButton: {fileID: 568771826}
-  swipeThreshold: 50
+  _newGameButton: {fileID: 568771826}
+  _swipeThreshold: 50
 --- !u!4 &1256892594
 Transform:
   m_ObjectHideFlags: 0
@@ -1168,8 +1168,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc1cc2aeee3cef9459eda8d304f9b554, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab: {fileID: 408289931078863884, guid: bb89f70845c22994081acc14d6b7fa0b, type: 3}
-  gridManager: {fileID: 1197977853}
+  _tilePrefab: {fileID: 408289931078863884, guid: bb89f70845c22994081acc14d6b7fa0b, type: 3}
+  _gridManager: {fileID: 1197977853}
 --- !u!4 &1808871165
 Transform:
   m_ObjectHideFlags: 0
@@ -1214,9 +1214,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19b0777bb28920041abd7f45ca46a0b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputManager: {fileID: 1256892593}
-  gridManager: {fileID: 1197977853}
-  scoreManager: {fileID: 55990670}
+  _inputManager: {fileID: 1256892593}
+  _gridManager: {fileID: 1197977853}
+  _scoreManager: {fileID: 55990670}
 --- !u!4 &1943554406
 Transform:
   m_ObjectHideFlags: 0
