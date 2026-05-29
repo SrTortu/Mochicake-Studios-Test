@@ -1,11 +1,15 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class S_ScoreManager : MonoBehaviour
 {
+    [Header("Score")]
     [SerializeField] private TextMeshProUGUI scoreText;
-    [SerializeField] private TextMeshProUGUI gameOverText;
+    [SerializeField] private TextMeshProUGUI recordText;
+    
+    private bool _isGameOver = false;
 
     private int score = 0;
     private int highScore = 0;
@@ -16,12 +20,12 @@ public class S_ScoreManager : MonoBehaviour
     {
         highScore = PlayerPrefs.GetInt("HighScore", 0);
         UpdateScoreDisplay();
+        _isGameOver = false;
     }
 
     public void ResetScore()
     {
         score = 0;
-        gameOverText.text = "";
         UpdateScoreDisplay();
     }
 
@@ -39,16 +43,14 @@ public class S_ScoreManager : MonoBehaviour
             PlayerPrefs.SetInt("HighScore", highScore);
         }
 
-        gameOverText.text = $"¡GAME OVER!\nPuntuación: {score}\nMejor: {highScore}";
-    }
-
-    public void ShowVictory()
-    {
-        gameOverText.text = "¡GANASTE!\n¡Alcanzaste 2048!";
+        _isGameOver = true;
     }
 
     private void UpdateScoreDisplay()
     {
         scoreText.text = $"Puntuación: {score}";
+        recordText.text = $"Mejor: {highScore}"; 
+        
     }
+    
 }

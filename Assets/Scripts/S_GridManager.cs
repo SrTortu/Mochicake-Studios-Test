@@ -9,11 +9,13 @@ public class S_GridManager : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private RectTransform _gridContainer;
+    [SerializeField] private Image _gridImage;
     [SerializeField] private SO_TileData[] _tileData;
     [SerializeField] private S_PoolManager _poolManager;
 
     [Space(10), Header("Grid Settings")]
     [SerializeField] private int _gridSize = 4;
+    [SerializeField] private Color _gridColor;
     [SerializeField] private float _cellSize = 100f;
     [SerializeField] private float _spacing = 10f;
     [SerializeField] private Color _cellBackgroundColor ;
@@ -55,7 +57,7 @@ public class S_GridManager : MonoBehaviour
             cellBg.transform.SetParent(_gridContainer, false);
 
             RectTransform rect = cellBg.AddComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(_cellSize, _cellSize);
+            rect.sizeDelta = new Vector2(_cellSize-5, _cellSize-5); // -5px de margin
             rect.anchoredPosition = GetTilePosition(i);
 
             Image image = cellBg.AddComponent<Image>();
@@ -321,6 +323,11 @@ public class S_GridManager : MonoBehaviour
             float margin = 4f;
             _gridContainer.sizeDelta = new Vector2(total + margin, total + margin);
         }
+        if (_gridImage != null)
+        {
+            _gridImage.color = _gridColor;
+        }
+        
     }
 
     public bool HasAvailableMoves()

@@ -1,10 +1,16 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class S_GameManager : MonoBehaviour
 {
     [SerializeField] private S_InputManager _inputManager;
     [SerializeField] private S_GridManager _gridManager;
     [SerializeField] private S_ScoreManager _scoreManager;
+
+    [Header("Game Over Panel")]
+    [SerializeField] private GameObject _gameOverPanel;
 
     private bool _gameOver = false;
 
@@ -16,11 +22,17 @@ public class S_GameManager : MonoBehaviour
         StartNewGame();
     }
 
-    private void StartNewGame()
+    public void StartNewGame()
     {
         _gameOver = false;
         _scoreManager.ResetScore();
         _gridManager.StartNewGame();
+
+        if (_gameOverPanel != null)
+        {
+            _gameOverPanel.GetComponent<CanvasGroup>().alpha = 0f;
+            _gameOverPanel.SetActive(false);
+        }
     }
 
     private void HandleMove(Direction direction)
@@ -41,8 +53,40 @@ public class S_GameManager : MonoBehaviour
             {
                 _scoreManager.ShowGameOver();
                 _gameOver = true;
+                ShowGameOverPanel();
             }
         }
+    }
+
+    private void ShowGameOverPanel()
+    {
+        if (_gameOverPanel != null)
+        {
+            _gameOverPanel.SetActive(true);
+            StartCoroutine(GameOverPanelAnim());
+        }
+    }
+
+    private IEnumerator GameOverPanelAnim()
+    {
+        CanvasGroup canvasGroup = _gameOverPanel.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = _gameOverPanel.AddComponent<CanvasGroup>();
+        }
+
+        canvasGroup.alpha = 0f;
+        float duration = 0.5f;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            canvasGroup.alpha = Mathf.Lerp(0f, 1f, elapsedTime / duration);
+            yield return null;
+        }
+
+        canvasGroup.alpha = 1f;
     }
 
 }
