@@ -197,7 +197,11 @@ public class S_GridManager : MonoBehaviour
     }
 
 
-
+/*
+ * Dependiendo de la dirección, los bucles de movimiento y merge deben recorrer el array de tiles
+ * en un orden específico para asegurar que los merges se hagan correctamente. Con esta funcion obtengo los
+ * parametros necesarios para cada dirección.
+ */
     private void GetLoopParameters(Direction direction, out int startIndex, out int endIndex, out int step)
     {
         switch (direction)
@@ -230,6 +234,9 @@ public class S_GridManager : MonoBehaviour
         }
     }
 
+    /*
+     * Se calcula el indice del vecino dependiendo de la dirección.
+     */
     private int GetNeighborIndex(int index, Direction direction)
     {
         switch (direction)
@@ -253,8 +260,6 @@ public class S_GridManager : MonoBehaviour
         }
         return -1;
     }
-
-    // ===================== SPAWN =====================
 
     private void UpdateFreeIndexes()
     {
@@ -282,19 +287,22 @@ public class S_GridManager : MonoBehaviour
             dataIndex = 1;
         }
 
+        
         S_Tile newTile = _poolManager.SpawnFromPool(_gridContainer);
-        newTile.transform.SetAsLastSibling(); // Asegurar que esté encima de las celdas de fondo
+        
+        // Set tile position and size
         RectTransform tileRect = newTile.transform as RectTransform;
         tileRect.sizeDelta = new Vector2(_cellSize, _cellSize);
         tileRect.anchoredPosition = GetTilePosition(tileIndex);
+        
+        // Initialize tile data
         newTile.Init(_tileData[dataIndex], dataIndex);
         _tiles[tileIndex] = newTile;
 
         newTile.AnimateSpawn();
     }
-
-    // ===================== VISUALS =====================
-
+    
+    // Apartir del indice calcula la posición del tile de forma espacial [X,Y]
     private Vector2 GetTilePosition(int index)
     {
         int row = index / _gridSize;
