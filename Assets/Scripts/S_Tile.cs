@@ -16,9 +16,7 @@ public class S_Tile : MonoBehaviour
     [SerializeField] private float _spawnDuration = 0.15f;
     [SerializeField] private AnimationCurve _mergeCurve;
     [SerializeField] private float _mergeDuration = 0.15f;
-
-
-
+    
     private SO_TileData _tileData;
     private int _dataIndex;
 
@@ -58,15 +56,27 @@ public class S_Tile : MonoBehaviour
         UpdateText();
         AnimateMerge();
     }
+    
+    public int GetIDataIndex()
+    {
+        return _dataIndex;
+    }
 
     public void AnimateMerge()
     {
-        if (gameObject.activeInHierarchy)
-            StartCoroutine(MergeCoroutine(_mergeDuration));
-        else
-            transform.localScale = Vector3.one;
+        StartCoroutine(MergeCoroutine(_mergeDuration));
     }
-
+    public void AnimateToPosition(Vector2 targetPosition)
+    {
+        StartCoroutine(MoveToPositionCoroutine(targetPosition, _moveDuration));
+    }
+    
+    public void AnimateSpawn()
+    {
+        StartCoroutine(SpawnCoroutine(_spawnDuration));
+    }
+    
+    // =================== Merge Animation ===================
     private IEnumerator MergeCoroutine(float duration)
     {
         RectTransform rectTransform = GetComponent<RectTransform>();
@@ -101,25 +111,8 @@ public class S_Tile : MonoBehaviour
 
         rectTransform.localScale = originalScale;
     }
-    public int GetIDataIndex()
-    {
-        return _dataIndex;
-    }
-
-    public void AnimateToPosition(Vector2 targetPosition)
-    {
-        if (gameObject.activeInHierarchy)
-            StartCoroutine(MoveToPositionCoroutine(targetPosition, _moveDuration));
-    }
-
-    public void AnimateSpawn()
-    {
-        if (gameObject.activeInHierarchy)
-            StartCoroutine(SpawnCoroutine(_spawnDuration));
-        else
-            transform.localScale = Vector3.one;
-    }
-
+    
+    // ====================== Spawn Animation ======================
     private IEnumerator SpawnCoroutine(float duration)
     {
         RectTransform rectTransform = GetComponent<RectTransform>();
@@ -140,6 +133,7 @@ public class S_Tile : MonoBehaviour
         rectTransform.localScale = Vector3.one;
     }
 
+    // ====================== Move Animation ======================
     private IEnumerator MoveToPositionCoroutine(Vector2 targetPosition, float duration)
     {
         RectTransform rectTransform = GetComponent<RectTransform>();

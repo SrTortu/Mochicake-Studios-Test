@@ -8,8 +8,6 @@ public class S_ScoreManager : MonoBehaviour
     [Header("Score")]
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI recordText;
-    
-    private bool _isGameOver = false;
 
     private int score = 0;
     private int highScore = 0;
@@ -20,7 +18,6 @@ public class S_ScoreManager : MonoBehaviour
     {
         highScore = PlayerPrefs.GetInt("HighScore", 0);
         UpdateScoreDisplay();
-        _isGameOver = false;
     }
 
     public void ResetScore()
@@ -35,15 +32,13 @@ public class S_ScoreManager : MonoBehaviour
         UpdateScoreDisplay();
     }
 
-    public void ShowGameOver()
+    public void UpdateRecord()
     {
         if (score > highScore)
         {
             highScore = score;
             PlayerPrefs.SetInt("HighScore", highScore);
         }
-
-        _isGameOver = true;
     }
 
     private void UpdateScoreDisplay()

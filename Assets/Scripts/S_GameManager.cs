@@ -8,8 +8,7 @@ public class S_GameManager : MonoBehaviour
     [SerializeField] private S_InputManager _inputManager;
     [SerializeField] private S_GridManager _gridManager;
     [SerializeField] private S_ScoreManager _scoreManager;
-
-    [Header("Game Over Panel")]
+    
     [SerializeField] private GameObject _gameOverPanel;
 
     private bool _gameOver = false;
@@ -18,7 +17,6 @@ public class S_GameManager : MonoBehaviour
     {
         _inputManager.OnMove += HandleMove;
         _inputManager.OnNewGame += StartNewGame;
-
         StartNewGame();
     }
 
@@ -37,6 +35,7 @@ public class S_GameManager : MonoBehaviour
 
     private void HandleMove(Direction direction)
     {
+        // Si el juego ya terminó, no hacer nada
         if (_gameOver)
             return;
 
@@ -51,7 +50,7 @@ public class S_GameManager : MonoBehaviour
             // Verificar GameOver si movimiento falla
             if (!_gridManager.HasAvailableMoves())
             {
-                _scoreManager.ShowGameOver();
+                _scoreManager.UpdateRecord();
                 _gameOver = true;
                 ShowGameOverPanel();
             }
@@ -66,14 +65,10 @@ public class S_GameManager : MonoBehaviour
             StartCoroutine(GameOverPanelAnim());
         }
     }
-
+    
     private IEnumerator GameOverPanelAnim()
     {
         CanvasGroup canvasGroup = _gameOverPanel.GetComponent<CanvasGroup>();
-        if (canvasGroup == null)
-        {
-            canvasGroup = _gameOverPanel.AddComponent<CanvasGroup>();
-        }
 
         canvasGroup.alpha = 0f;
         float duration = 0.5f;

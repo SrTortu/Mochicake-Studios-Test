@@ -18,17 +18,15 @@ public class S_GridManager : MonoBehaviour
     [SerializeField] private Color _gridColor;
     [SerializeField] private float _cellSize = 100f;
     [SerializeField] private float _spacing = 10f;
-    [SerializeField] private Color _cellBackgroundColor ;
-
+    [SerializeField] private Color _cellBackgroundColor;
 
     public int GridSize { get { return _gridSize; } }
+    public int LastMergeValue { get { return _lastMergeValue; } }
 
     private S_Tile[] _tiles;
     private List<int> _freeIndexes;
     private int _lastMergeValue;
     private bool[] _mergedThisTurnCache;
-
-    public int LastMergeValue { get { return _lastMergeValue; } }
 
     private void Awake()
     {
@@ -49,6 +47,8 @@ public class S_GridManager : MonoBehaviour
             _freeIndexes.Add(i);
     }
 
+    
+    // Crea los fondos de las celdas 
     private void CreateBackgroundCells(int total)
     {
         for (int i = 0; i < total; i++)
@@ -64,7 +64,7 @@ public class S_GridManager : MonoBehaviour
             image.color = _cellBackgroundColor;
         }
     }
-
+    
     public void StartNewGame()
     {
         ClearGrid();
@@ -87,6 +87,8 @@ public class S_GridManager : MonoBehaviour
 
         InitializeGrid();
     }
+
+    // ===================== MOVEMENT =====================
 
     public bool TryMove(Direction direction)
     {
@@ -194,6 +196,8 @@ public class S_GridManager : MonoBehaviour
         return merged;
     }
 
+
+
     private void GetLoopParameters(Direction direction, out int startIndex, out int endIndex, out int step)
     {
         switch (direction)
@@ -250,7 +254,7 @@ public class S_GridManager : MonoBehaviour
         return -1;
     }
 
-    // ====================== SPAWN ======================
+    // ===================== SPAWN =====================
 
     private void UpdateFreeIndexes()
     {
@@ -289,7 +293,7 @@ public class S_GridManager : MonoBehaviour
         newTile.AnimateSpawn();
     }
 
-    // ====================== VISUALES ======================
+    // ===================== VISUALS =====================
 
     private Vector2 GetTilePosition(int index)
     {
@@ -308,13 +312,13 @@ public class S_GridManager : MonoBehaviour
     {
         for (int i = 0; i < _tiles.Length; i++)
         {
-            if (_tiles[i] != null && _tiles[i].gameObject.activeInHierarchy)
+            if (_tiles[i] != null)
             {
                 _tiles[i].AnimateToPosition(GetTilePosition(i));
             }
         }
     }
-
+    // En lugar de Awake, inicializo el grid en OnValidate para tener feedback visual rapido
     private void OnValidate()
     {
         if (_gridContainer != null)
@@ -327,7 +331,7 @@ public class S_GridManager : MonoBehaviour
         {
             _gridImage.color = _gridColor;
         }
-        
+
     }
 
     public bool HasAvailableMoves()
