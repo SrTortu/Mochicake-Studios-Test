@@ -83,7 +83,7 @@ public class S_GameManager : MonoBehaviour
         CanvasGroup canvasGroup = _gameOverPanel.GetComponent<CanvasGroup>();
 
         canvasGroup.alpha = 0f;
-        float duration = 0.5f;
+        float duration = 1f; // !!!ALERTA DE NUMERO MAGICO (1f)!!!
         float elapsedTime = 0f;
 
         while (elapsedTime < duration)

@@ -372,7 +372,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.58431375, g: 0.5254902, b: 0.45882356, a: 1}
+    m_NormalColor: {r: 0.6754716, g: 0.6091591, b: 0.5340049, a: 1}
     m_HighlightedColor: {r: 0.7803922, g: 0.70980394, b: 0.6392157, a: 1}
     m_PressedColor: {r: 0.46274513, g: 0.4156863, b: 0.3647059, a: 1}
     m_SelectedColor: {r: 0.60784316, g: 0.5411765, b: 0.47450984, a: 1}
@@ -529,7 +529,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 157.8
+  m_fontSize: 157.2
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1158,7 +1158,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 39.15
+  m_fontSize: 39.3
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
