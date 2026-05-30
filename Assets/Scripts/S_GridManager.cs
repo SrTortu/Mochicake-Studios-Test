@@ -22,6 +22,18 @@ public class S_GridManager : MonoBehaviour
 
     public int GridSize { get { return _gridSize; } }
     public int LastMergeValue { get { return _lastMergeValue; } }
+    public event System.Action OnTileSpawned;
+    public event System.Action OnTileMerge;
+
+    public void InvokeTileMerge()
+    {
+        OnTileMerge?.Invoke();
+    }
+
+    public void InvokeTileSpawned()
+    {
+        OnTileSpawned?.Invoke();
+    }
 
     private S_Tile[] _tiles;
     private List<int> _freeIndexes;
@@ -48,7 +60,7 @@ public class S_GridManager : MonoBehaviour
     }
 
     
-    // Crea los fondos de las celdas 
+    // Crea los fondos de las celdas libres
     private void CreateBackgroundCells(int total)
     {
         for (int i = 0; i < total; i++)
@@ -193,6 +205,11 @@ public class S_GridManager : MonoBehaviour
             }
         }
 
+        if (merged)
+        {
+            OnTileMerge?.Invoke();
+        }
+
         return merged;
     }
 
@@ -300,6 +317,7 @@ public class S_GridManager : MonoBehaviour
         _tiles[tileIndex] = newTile;
 
         newTile.AnimateSpawn();
+        OnTileSpawned?.Invoke();
     }
     
     // Apartir del indice calcula la posición del tile de forma espacial [X,Y]

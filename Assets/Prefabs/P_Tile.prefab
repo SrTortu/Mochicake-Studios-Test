@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1976881304011474719}
   - component: {fileID: 7494149736916124280}
   - component: {fileID: 265698079194776171}
+  - component: {fileID: 3175550249475513155}
   m_Layer: 5
   m_Name: P_Tile
   m_TagString: Untagged
@@ -91,6 +92,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _background: {fileID: 7494149736916124280}
   _valueText: {fileID: 4937698372807633894}
+  _animator: {fileID: 3175550249475513155}
+--- !u!114 &3175550249475513155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408289931078863884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d87b80544a715b47989a3b304743890, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   _moveCurve:
     serializedVersion: 2
     m_Curve:
@@ -104,17 +118,8 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.80782473
-      value: 0.19719571
-      inSlope: 0.86231863
-      outSlope: 0.86231863
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1.0933228
-      value: 1.013195
+      time: 1
+      value: 1
       inSlope: 2
       outSlope: 2
       tangentMode: 0
@@ -124,7 +129,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _moveDuration: 0.1
+  _moveDuration: 0.15
   _spawnCurve:
     serializedVersion: 2
     m_Curve:
@@ -149,7 +154,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _spawnDuration: 0.15
+  _spawnDuration: 0.2
   _mergeCurve:
     serializedVersion: 2
     m_Curve:
@@ -174,6 +179,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  _mergeExpandScale: 1.4
   _mergeDuration: 0.15
 --- !u!1 &7193716176713137198
 GameObject:

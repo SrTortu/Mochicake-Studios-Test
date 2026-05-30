@@ -17,6 +17,7 @@ public class S_GameManager : MonoBehaviour
     {
         _inputManager.OnMove += HandleMove;
         _inputManager.OnNewGame += StartNewGame;
+        _gridManager.OnTileSpawned += HandleTileSpawned;
         StartNewGame();
     }
 
@@ -54,6 +55,17 @@ public class S_GameManager : MonoBehaviour
                 _gameOver = true;
                 ShowGameOverPanel();
             }
+        }
+    }
+
+    private void HandleTileSpawned()
+    {
+        // Verificar GameOver después de spawnear un nuevo tile
+        if (!_gameOver && !_gridManager.HasAvailableMoves())
+        {
+            _scoreManager.UpdateRecord();
+            _gameOver = true;
+            ShowGameOverPanel();
         }
     }
 
