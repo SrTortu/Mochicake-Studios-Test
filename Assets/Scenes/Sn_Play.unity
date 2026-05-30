@@ -2040,10 +2040,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f2dc3bac3989224aa28b1ada2a86cd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mergeSound: {fileID: 8300000, guid: 58f4d3c57a9a842489966f2753add313, type: 3}
-  _spawnSound: {fileID: 8300000, guid: b0d03572d07dd06418ba05cbd0d38cd8, type: 3}
+  _mergeSound: {fileID: 8300000, guid: ecb231e3b8aa5f84b8d9032da3272e98, type: 3}
+  _spawnSound: {fileID: 8300000, guid: 4a782a45bb29ca24fb37823e508bca96, type: 3}
   _audioSource: {fileID: 1899608824}
-  _volume: 0.5
+  _volume: 0.3
 --- !u!4 &1899608826
 Transform:
   m_ObjectHideFlags: 0
