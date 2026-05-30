@@ -1453,7 +1453,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 634, y: 634}
+  m_SizeDelta: {x: 689, y: 689}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &935564937
 MonoBehaviour:
@@ -1468,7 +1468,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6981132, g: 0.6268834, b: 0.5519046, a: 1}
+  m_Color: {r: 0.5803922, g: 0.52156866, b: 0.454902, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1642,6 +1642,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1197977854}
   - component: {fileID: 1197977853}
+  - component: {fileID: 1197977856}
+  - component: {fileID: 1197977855}
   m_Layer: 0
   m_Name: GridManager
   m_TagString: Untagged
@@ -1661,26 +1663,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1059d7afe7150b4a9dbbceb409b8723, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gridContainer: {fileID: 935564936}
-  _gridImage: {fileID: 935564937}
-  _tileData:
-  - {fileID: 11400000, guid: ee198b71190b4b6429f493d473d8349b, type: 2}
-  - {fileID: 11400000, guid: 2a3337bf7fc6da843b06dd399243f173, type: 2}
-  - {fileID: 11400000, guid: 9f70708026654e24d9232ba537e90112, type: 2}
-  - {fileID: 11400000, guid: 1f2abc3455acbe34c8d0fb6757723e1a, type: 2}
-  - {fileID: 11400000, guid: 5a6defc0eebfa934c9aa2652a8463009, type: 2}
-  - {fileID: 11400000, guid: 841208005c8814341acc8cbc9f464aa5, type: 2}
-  - {fileID: 11400000, guid: 18296509574bda145998ec88cde422d8, type: 2}
-  - {fileID: 11400000, guid: 6bf659778bb36654394c4cc6c6656cb9, type: 2}
-  - {fileID: 11400000, guid: 9cc9210194e86ce4eada8a556959c424, type: 2}
-  - {fileID: 11400000, guid: e115b63418f9d4049abc976dfc362582, type: 2}
-  - {fileID: 11400000, guid: 5bd2a30ca197009419a342ac20b053f9, type: 2}
-  _poolManager: {fileID: 1808871164}
-  _gridSize: 4
-  _gridColor: {r: 0.6981132, g: 0.6268834, b: 0.5519046, a: 1}
-  _cellSize: 150
-  _spacing: 10
-  _cellBackgroundColor: {r: 0.78113204, g: 0.71579206, b: 0.6470132, a: 1}
+  _gridUI: {fileID: 1197977856}
+  _gridLogic: {fileID: 1197977855}
 --- !u!4 &1197977854
 Transform:
   m_ObjectHideFlags: 0
@@ -1696,6 +1680,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1197977855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197977852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 763f382887ebece4c8e4a9db1b6e50d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gridUI: {fileID: 1197977856}
+  _tileData:
+  - {fileID: 11400000, guid: ee198b71190b4b6429f493d473d8349b, type: 2}
+  - {fileID: 11400000, guid: 2a3337bf7fc6da843b06dd399243f173, type: 2}
+  - {fileID: 11400000, guid: 9f70708026654e24d9232ba537e90112, type: 2}
+  - {fileID: 11400000, guid: 1f2abc3455acbe34c8d0fb6757723e1a, type: 2}
+  - {fileID: 11400000, guid: 5a6defc0eebfa934c9aa2652a8463009, type: 2}
+  - {fileID: 11400000, guid: 841208005c8814341acc8cbc9f464aa5, type: 2}
+  - {fileID: 11400000, guid: 18296509574bda145998ec88cde422d8, type: 2}
+  - {fileID: 11400000, guid: 6bf659778bb36654394c4cc6c6656cb9, type: 2}
+  - {fileID: 11400000, guid: 9cc9210194e86ce4eada8a556959c424, type: 2}
+  - {fileID: 11400000, guid: e115b63418f9d4049abc976dfc362582, type: 2}
+  - {fileID: 11400000, guid: 5bd2a30ca197009419a342ac20b053f9, type: 2}
+  _poolManager: {fileID: 1808871164}
+--- !u!114 &1197977856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197977852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 245bd0c19f60b36429774a2ed957d816, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gridContainer: {fileID: 935564936}
+  _gridImage: {fileID: 935564937}
+  _gridSize: 4
+  _gridColor: {r: 0.5803922, g: 0.52156866, b: 0.454902, a: 1}
+  _cellSize: 160
+  _spacing: 15
+  _cellBackgroundColor: {r: 0.5803922, g: 0.52559125, b: 0.45490196, a: 1}
 --- !u!1 &1256892592
 GameObject:
   m_ObjectHideFlags: 0

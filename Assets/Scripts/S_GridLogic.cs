@@ -1,0 +1,324 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Random = UnityEngine.Random;
+
+public class S_GridLogic : MonoBehaviour
+{
+    [Header("References")]
+    [SerializeField] private S_GridUI _gridUI;
+    [SerializeField] private SO_TileData[] _tileData;
+    [SerializeField] private S_PoolManager _poolManager;
+
+    public event Action OnTileSpawned;
+    public event Action OnTileMerge;
+
+    public int LastMergeValue { get; private set; }
+
+    private S_Tile[] _tiles;
+    private List<int> _freeIndexes;
+    private bool[] _mergedThisTurnCache;
+
+    private void Awake()
+    {
+        InitializeGrid();
+    }
+
+    private void InitializeGrid()
+    {
+        // Crea el array de tiles
+        int total = _gridUI.GridSize * _gridUI.GridSize;
+        _tiles = new S_Tile[total];
+        _freeIndexes = new List<int>(total);
+        _mergedThisTurnCache = new bool[total];
+
+        // Crea la lista de índices libres
+        for (int i = 0; i < total; i++)
+            _freeIndexes.Add(i);
+    }
+
+    public void StartNewGame()
+    {
+        ClearGrid();
+        SpawnTile();
+        SpawnTile();
+    }
+
+    private void ClearGrid()
+    {
+        // Primero devolver todos los tiles al pool
+        for (int i = _gridUI.GridContainer.childCount - 1; i >= 0; i--)
+        {
+            Transform child = _gridUI.GridContainer.GetChild(i);
+            if (child.GetComponent<S_Tile>() != null)
+            {
+                _poolManager.ReturnToPool(child.gameObject);
+            }
+        }
+
+        InitializeGrid();
+    }
+
+    public bool TryMove(Direction direction)
+    {
+        bool moved = Move(direction);
+
+        if (moved)
+            StartCoroutine(SpawnAfterAnimation());
+
+        return moved;
+    }
+
+    private IEnumerator SpawnAfterAnimation()
+    {
+        yield return new WaitForSeconds(0.1f); // Esperar a que terminen las animaciones de movimiento
+        SpawnTile();
+    }
+
+    private bool Move(Direction direction)
+    {
+        bool moved = false;
+        Array.Clear(_mergedThisTurnCache, 0, _mergedThisTurnCache.Length);
+        LastMergeValue = 0;
+
+        // Primero: mover todos los tiles
+        moved = MoveTiles(direction);
+
+        // Segundo: hacer los merges
+        bool merged = MergeTiles(direction, _mergedThisTurnCache);
+
+        // Tercero: mover nuevamente los tiles resultantes de los merges
+        if (merged)
+        {
+            moved = MoveTiles(direction) || moved;
+        }
+
+        if (moved || merged)
+        {
+            UpdateFreeIndexes();
+            UpdateTiles();
+        }
+
+        return moved || merged;
+    }
+
+    private bool MoveTiles(Direction direction)
+    {
+        bool moved = false;
+        int startIndex, endIndex, step;
+
+        GetLoopParameters(direction, out startIndex, out endIndex, out step);
+
+        for (int i = startIndex; i != endIndex; i += step)
+        {
+            if (_tiles[i] != null)
+            {
+                int targetIndex = i;
+                int nextIndex = GetNeighborIndex(targetIndex, direction);
+
+                // Encontrar la posición más lejana posible
+                while (nextIndex >= 0 && nextIndex < _tiles.Length && _tiles[nextIndex] == null)
+                {
+                    targetIndex = nextIndex;
+                    nextIndex = GetNeighborIndex(targetIndex, direction);
+                }
+
+                if (targetIndex != i)
+                {
+                    _tiles[targetIndex] = _tiles[i];
+                    _tiles[i] = null;
+                    moved = true;
+                }
+            }
+        }
+
+        return moved;
+    }
+
+    private bool MergeTiles(Direction direction, bool[] mergedThisTurnCache)
+    {
+        bool merged = false;
+        int startIndex, endIndex, step ;
+        GetLoopParameters(direction, out startIndex, out endIndex, out step);
+
+        for (int i = startIndex; i != endIndex; i += step)
+        {
+            if (_tiles[i] != null)
+            {
+                int neighborIndex = GetNeighborIndex(i, direction);
+                if (neighborIndex >= 0 && neighborIndex < _tiles.Length &&
+                    _tiles[neighborIndex] != null &&
+                    _tiles[neighborIndex].GetValue() == _tiles[i].GetValue() &&
+                    !mergedThisTurnCache[neighborIndex])
+                {
+                    SO_TileData newData = _tileData[_tiles[i].GetIDataIndex() + 1];
+                    _tiles[neighborIndex].UpgradeData(newData);
+                    LastMergeValue += newData.value;
+                    _poolManager.ReturnToPool(_tiles[i].gameObject);
+                    _tiles[i] = null;
+                    mergedThisTurnCache[neighborIndex] = true;
+                    merged = true;
+                }
+            }
+        }
+
+        if (merged)
+        {
+            OnTileMerge?.Invoke();
+        }
+
+        return merged;
+    }
+
+/*
+ * Dependiendo de la dirección, los bucles de movimiento y merge deben recorrer el array de tiles
+ * en un orden específico para asegurar que los merges se hagan correctamente. Con esta funcion obtengo los
+ * parametros necesarios para cada dirección.
+ */
+    private void GetLoopParameters(Direction direction, out int startIndex, out int endIndex, out int step)
+    {
+        switch (direction)
+        {
+            case Direction.Up:
+                startIndex = 0;
+                endIndex = _tiles.Length;
+                step = 1;
+                break;
+            case Direction.Down:
+                startIndex = _tiles.Length - 1;
+                endIndex = -1;
+                step = -1;
+                break;
+            case Direction.Left:
+                startIndex = 0;
+                endIndex = _tiles.Length;
+                step = 1;
+                break;
+            case Direction.Right:
+                startIndex = _tiles.Length - 1;
+                endIndex = -1;
+                step = -1;
+                break;
+            default:
+                startIndex = 0;
+                endIndex = _tiles.Length;
+                step = 1;
+                break;
+        }
+    }
+
+    /*
+     * Se calcula el indice del vecino dependiendo de la dirección.
+     */
+    private int GetNeighborIndex(int index, Direction direction)
+    {
+        switch (direction)
+        {
+            case Direction.Up:
+                if (index - _gridUI.GridSize >= 0)
+                    return index - _gridUI.GridSize;
+                break;
+            case Direction.Down:
+                if (index + _gridUI.GridSize < _tiles.Length)
+                    return index + _gridUI.GridSize;
+                break;
+            case Direction.Left:
+                if (index % _gridUI.GridSize != 0)
+                    return index - 1;
+                break;
+            case Direction.Right:
+                if ((index + 1) % _gridUI.GridSize != 0)
+                    return index + 1;
+                break;
+        }
+        return -1;
+    }
+
+    private void UpdateFreeIndexes()
+    {
+        _freeIndexes.Clear();
+        for (int i = 0; i < _tiles.Length; i++)
+        {
+            if (_tiles[i] == null)
+            {
+                _freeIndexes.Add(i);
+            }
+        }
+    }
+
+    private void SpawnTile()
+    {
+        if (_freeIndexes.Count == 0) return;
+
+        int randomIndex = Random.Range(0, _freeIndexes.Count);
+        int tileIndex = _freeIndexes[randomIndex];
+        int dataIndex = 0;
+        _freeIndexes.RemoveAt(randomIndex);
+
+        if (Random.value > 0.9f)
+        {
+            dataIndex = 1;
+        }
+
+        S_Tile newTile = _poolManager.SpawnFromPool(_gridUI.GridContainer);
+
+        RectTransform tileRect = newTile.transform as RectTransform;
+        tileRect.sizeDelta = new Vector2(_gridUI.CellSize, _gridUI.CellSize);
+        tileRect.anchoredPosition = _gridUI.GetTilePosition(tileIndex);
+
+        newTile.Init(_tileData[dataIndex], dataIndex);
+        _tiles[tileIndex] = newTile;
+
+        newTile.AnimateSpawn();
+        OnTileSpawned?.Invoke();
+    }
+
+    private void UpdateTiles()
+    {
+        for (int i = 0; i < _tiles.Length; i++)
+        {
+            if (_tiles[i] != null)
+            {
+                _tiles[i].AnimateToPosition(_gridUI.GetTilePosition(i));
+            }
+        }
+    }
+
+    public bool HasAvailableMoves()
+    {
+        // Si hay espacios vacíos, hay movimientos disponibles
+        if (_freeIndexes.Count > 0)
+            return true;
+
+        // Verificar si hay merges posibles
+        for (int i = 0; i < _tiles.Length; i++)
+        {
+            if (_tiles[i] == null) continue;
+
+            int currentValue = _tiles[i].GetValue();
+
+            // Verificar vecino arriba
+            int upIndex = GetNeighborIndex(i, Direction.Up);
+            if (upIndex >= 0 && _tiles[upIndex] != null && _tiles[upIndex].GetValue() == currentValue)
+                return true;
+
+            // Verificar vecino abajo
+            int downIndex = GetNeighborIndex(i, Direction.Down);
+            if (downIndex >= 0 && _tiles[downIndex] != null && _tiles[downIndex].GetValue() == currentValue)
+                return true;
+
+            // Verificar vecino izquierda
+            int leftIndex = GetNeighborIndex(i, Direction.Left);
+            if (leftIndex >= 0 && _tiles[leftIndex] != null && _tiles[leftIndex].GetValue() == currentValue)
+                return true;
+
+            // Verificar vecino derecha
+            int rightIndex = GetNeighborIndex(i, Direction.Right);
+            if (rightIndex >= 0 && _tiles[rightIndex] != null && _tiles[rightIndex].GetValue() == currentValue)
+                return true;
+        }
+
+        return false;
+    }
+}
