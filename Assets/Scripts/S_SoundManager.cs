@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class S_SoundManager : MonoBehaviour
 {
+    [SerializeField] private S_GridManager _gridManager;
+    
     [Header("Audio Clips")]
     [SerializeField] private AudioClip _mergeSound;
     [SerializeField] private AudioClip _spawnSound;
@@ -10,28 +12,13 @@ public class S_SoundManager : MonoBehaviour
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] [Range(0f, 1f)] private float _volume = 0.5f;
 
-    private S_GridManager _gridManager;
-
     private void Awake()
     {
-        // Get GridManager reference
-        _gridManager = FindObjectOfType<S_GridManager>();
-
         // Subscribe to events
         if (_gridManager != null)
         {
             _gridManager.OnTileMerge += PlayMergeSound;
             _gridManager.OnTileSpawned += PlaySpawnSound;
-        }
-    }
-
-    private void OnDestroy()
-    {
-        // Unsubscribe from events
-        if (_gridManager != null)
-        {
-            _gridManager.OnTileMerge -= PlayMergeSound;
-            _gridManager.OnTileSpawned -= PlaySpawnSound;
         }
     }
 
@@ -50,9 +37,5 @@ public class S_SoundManager : MonoBehaviour
             _audioSource.PlayOneShot(_spawnSound, _volume);
         }
     }
-
-    public void SetVolume(float volume)
-    {
-        _volume = Mathf.Clamp01(volume);
-    }
+    
 }

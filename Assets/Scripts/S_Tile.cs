@@ -8,8 +8,6 @@ public class S_Tile : MonoBehaviour
     [Header("Visuals")]
     [SerializeField] private Image _background;
     [SerializeField] private TextMeshProUGUI _valueText;
-
-    [Header("References")]
     [SerializeField] private S_TileAnimator _animator;
 
     private SO_TileData _tileData;
